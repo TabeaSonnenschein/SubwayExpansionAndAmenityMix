@@ -1,0 +1,9 @@
+Autor: Tabea Sonnenschein
+
+These are the codes that were used to prepare, process and analyze the data for the Research Project (my Master Thesis):
+
+### Sonnenschein, T, Scheider, S., Zheng, S. (2021). THE REBIRTH OF URBAN SUBCENTERS - How Subway Expansion Impacts the Spatial Structure and Mix of Amenities in European Cities. Environment and Planning B: Urban Analytics and City Science.
+
+ABSTRACT: Why do some neighborhoods thrive, and others do not? While the importance of the local amenity mix has been established as a key determinant of local livability, its link to urban transport infrastructure remains understudied, partially due to a lack of data. Using spatiotemporal social media data from Foursquare, we analyze the impact of metro stations which opened between 2014 and 2017 on the amenity mix of surrounding neighborhoods in nine European cities: Rome, Milan, Barcelona, Budapest, Warsaw, Sofia, Vienna, Helsinki and Stuttgart. Thereby, we study three properties of the local amenity mix: its density, multifunctionality, and the heterogeneity between amenity types. For this purpose, we propose a new measurement of multifunctionality, which calculates the entropy of the locally present amenity set incorporating the degree of similarity between amenity types. For causal inference, we use Difference-in-Difference Regression based on Propensity Score Matching and Entropy Balancing. Our findings show that in most cities, subway expansion had a significant positive impact on the local amenity density and multifunctionality and that especially the social amenities - Arts & Entertainment, Restaurants and Nightlife - responded strongly. Moreover, considerable agglomeration forces seem to prevail, causing existing subcenters to benefit most from new metro stations.
+
+KEYWORDS: Subway Expansion, Location Theory, Consumer Amenities, Multifunctionality, Similarity-based Diversity, Spatiotemporal Analysis
