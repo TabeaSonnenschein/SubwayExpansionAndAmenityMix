@@ -66,7 +66,7 @@ Centroids_buff300m_df = read.csv(paste(city, "venuehexagonbuffers_tot.csv", sep 
 ###############################################################################
 
 Centroidcontrolcases = Centroid_data[which(Centroid_data$NEAR_DIST > 1500),]
-Centroid_data_metroneighbouroods = Centroid_data[which(Centroid_data$NEAR_DIST < 1200 & Centroid_data$station_open_year > Opening_year),]
+Centroid_data_metroneighbouroods = Centroid_data[which(Centroid_data$NEAR_DIST <= 1200 & Centroid_data$station_open_year > Opening_year),]
 Centroid_data_metroneighbouroods$metroneighbourhood = 1
 Centroidcontrolcases$metroneighbourhood = 0
 Centroid_data_metroandcontrol =  rbind(Centroid_data_metroneighbouroods, Centroidcontrolcases)
