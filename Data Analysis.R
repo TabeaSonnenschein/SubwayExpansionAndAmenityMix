@@ -26,7 +26,7 @@
 
 
 ## loading the packages
-pkgs <- c("rgdal","jpeg",  "corpcor", "ggplot2", "cowplot",  "boot",  
+pkgs = c("rgdal","jpeg",  "corpcor", "ggplot2", "cowplot",  "boot",  
           "plm", "MatchIt", "MASS", "reghelper", "jpeg", "ggfortify", 
           "usdm", "ggplot2","glmnet", "ebal")
 sapply(pkgs, require, character.only = T) #load 
@@ -58,24 +58,24 @@ post_3_years = Opening_year + 3
 ######## Loading the data##########
 setwd(paste(dataFolder, "/", city, sep = ""))
 
-Centroid_data <- read.csv(paste(city, "centroid_data.csv", sep = ""), header = TRUE)
+Centroid_data = read.csv(paste(city, "centroid_data.csv", sep = ""), header = TRUE)
 Centroids_buff300m_df = read.csv(paste(city, "venuehexagonbuffers_tot.csv", sep = ""), header = TRUE)
 
 ###############################################################################
 ####################### Propensity score matching #############################
 ###############################################################################
 
-Centroidcontrolcases <- Centroid_data[which(Centroid_data$NEAR_DIST > 1500),]
-Centroid_data_metroneighbouroods <- Centroid_data[which(Centroid_data$NEAR_DIST < 1200 & Centroid_data$station_open_year > Opening_year),]
-Centroid_data_metroneighbouroods$metroneighbourhood <- 1
-Centroidcontrolcases$metroneighbourhood <- 0
-Centroid_data_metroandcontrol <-  rbind(Centroid_data_metroneighbouroods, Centroidcontrolcases)
+Centroidcontrolcases = Centroid_data[which(Centroid_data$NEAR_DIST > 1500),]
+Centroid_data_metroneighbouroods = Centroid_data[which(Centroid_data$NEAR_DIST < 1200 & Centroid_data$station_open_year > Opening_year),]
+Centroid_data_metroneighbouroods$metroneighbourhood = 1
+Centroidcontrolcases$metroneighbourhood = 0
+Centroid_data_metroandcontrol =  rbind(Centroid_data_metroneighbouroods, Centroidcontrolcases)
 
 ## remove missing data
-Centroid_data_metroandcontrol <- Centroid_data_metroandcontrol[!is.na(Centroid_data_metroandcontrol$streetdistance),]
-Centroid_data_metroandcontrol <- Centroid_data_metroandcontrol[which(!is.na(Centroid_data_metroandcontrol$perc_unemployed) & !is.na(Centroid_data_metroandcontrol$pop_pre) & !is.na(Centroid_data_metroandcontrol$centroid_distance_center) & !is.na(Centroid_data_metroandcontrol$rowsum_pre & !is.na(Centroid_data_metroandcontrol$streetdistance))),]
-Centroid_data_metroandcontrol$streetdistance <- as.numeric(Centroid_data_metroandcontrol$streetdistance)
-Centroid_data_metroandcontrol <- Centroid_data_metroandcontrol[,c("ORIG_FID", "NEAR_DIST" , "metroneighbourhood", "nearstation_FID" , "station_name" ,  "station_open_year" ,   "pop_pre" , "pop_post",
+Centroid_data_metroandcontrol = Centroid_data_metroandcontrol[!is.na(Centroid_data_metroandcontrol$streetdistance),]
+Centroid_data_metroandcontrol = Centroid_data_metroandcontrol[which(!is.na(Centroid_data_metroandcontrol$perc_unemployed) & !is.na(Centroid_data_metroandcontrol$pop_pre) & !is.na(Centroid_data_metroandcontrol$centroid_distance_center) & !is.na(Centroid_data_metroandcontrol$rowsum_pre & !is.na(Centroid_data_metroandcontrol$streetdistance))),]
+Centroid_data_metroandcontrol$streetdistance = as.numeric(Centroid_data_metroandcontrol$streetdistance)
+Centroid_data_metroandcontrol = Centroid_data_metroandcontrol[,c("ORIG_FID", "NEAR_DIST" , "metroneighbourhood", "nearstation_FID" , "station_name" ,  "station_open_year" ,   "pop_pre" , "pop_post",
                                                                           "centroid_distance_center","pop_pre_buffer", "pop_post_buffer", "popchange", "popchange_buffer", "entropy_pre",   "rowsum_pre" , "entropy_post", "rowsum_post" , "entropy_diff", 
                                                                           "density_increase" ,  "nr_Food_pre_300mbuff" , "nr_ShopsServ_pre_300mbuff",  "nr_ArtsEnter_pre_300mbuff",  "nr_Nightlife_pre_300mbuff"  ,"nr_Proff_pre_300mbuff" ,
                                                                           "nr_Recreation_pre_300mbuff","nr_Food_prepost_300mbuff", "nr_ShopsServ_prepost_300mbuff",  "nr_ArtsEnter_prepost_300mbuff",  "nr_Nightlife_prepost_300mbuff" ,   
@@ -87,8 +87,8 @@ Centroid_data_metroandcontrol <- Centroid_data_metroandcontrol[,c("ORIG_FID", "N
 ############### Propensity Score Matching ################
 ##########################################################
 summary(lm(metroneighbourhood ~  centroid_distance_center+ perc_unemployed + pop_pre_buffer + rowsum_pre, Centroid_data_metroandcontrol))
-match.it <- matchit(metroneighbourhood ~ centroid_distance_center + perc_unemployed+ pop_pre_buffer + rowsum_pre, data = Centroid_data_metroandcontrol, method="nearest", ratio=1)
-PSM_dataset <- match.data(match.it, distance ="pscore")
+match.it = matchit(metroneighbourhood ~ centroid_distance_center + perc_unemployed+ pop_pre_buffer + rowsum_pre, data = Centroid_data_metroandcontrol, method="nearest", ratio=1)
+PSM_dataset = match.data(match.it, distance ="pscore")
 
 setwd(paste(dataFolder,"/", city,"/PSMresults", sep = ""))
 sink(paste( city, "PSM summary.txt"))
@@ -98,7 +98,7 @@ sink(paste( city, "PSM treatment prediction.txt"))
 summary(lm(metroneighbourhood ~ centroid_distance_center+ perc_unemployed + pop_pre_buffer + rowsum_pre, Centroid_data_metroandcontrol))
 sink()
 jpeg(paste(city,"PSM results.jpeg"), width = 8, height = 8, units = "in", res = 1000)
-g <- plot(match.it)
+g = plot(match.it)
 dev.off() 
 jpeg(paste(city, "PSM Histogram.jpeg"), width = 6, height = 6, units = "in", res = 1000)
 plot(match.it, type = "hist")
@@ -114,8 +114,8 @@ write.csv(PSM_dataset, paste(city, "PSM_dataset.csv", sep = ""))
 ######################################################
 ############ Entropy Balancing Matching ################
 ######################################################
-EB_dataset <- ebal::ebalance(Treatment = Centroid_data_metroandcontrol$metroneighbourhood, X= Centroid_data_metroandcontrol[,c("centroid_distance_center", "pop_pre_buffer", "popchange_buffer", "perc_unemployed", "rowsum_pre")], max.iterations = 200, print.level = 3)
-EB_dataset_trim <- ebalance.trim(EB_dataset, max.weight = NULL,
+EB_dataset = ebal::ebalance(Treatment = Centroid_data_metroandcontrol$metroneighbourhood, X= Centroid_data_metroandcontrol[,c("centroid_distance_center", "pop_pre_buffer", "popchange_buffer", "perc_unemployed", "rowsum_pre")], max.iterations = 200, print.level = 3)
+EB_dataset_trim = ebalance.trim(EB_dataset, max.weight = NULL,
               min.weight = 0, max.trim.iterations = 200,
               max.weight.increment = 0.92,
               min.weight.increment = 1.08,
@@ -131,8 +131,8 @@ apply(Centroid_data_metroandcontrol[Centroid_data_metroandcontrol$metroneighbour
 #covariate means of eligible untreated units after entropy balancing and trimming
 apply(Centroid_data_metroandcontrol[Centroid_data_metroandcontrol$metroneighbourhood==0,c("centroid_distance_center", "pop_pre_buffer", "popchange_buffer", "perc_unemployed", "rowsum_pre", "perc_foreign")],2,weighted.mean, w= EB_dataset_trim$w)
 
-Centroid_data_metroandcontrol$eb_weights[Centroid_data_metroandcontrol$metroneighbourhood==0] <- EB_dataset_trim$w
-Centroid_data_metroandcontrol$eb_weights[Centroid_data_metroandcontrol$metroneighbourhood==1] <- 1
+Centroid_data_metroandcontrol$eb_weights[Centroid_data_metroandcontrol$metroneighbourhood==0] = EB_dataset_trim$w
+Centroid_data_metroandcontrol$eb_weights[Centroid_data_metroandcontrol$metroneighbourhood==1] = 1
 write.csv(Centroid_data_metroandcontrol, "Centroid_data_metroandcontrol.csv")
 
 
@@ -140,109 +140,109 @@ write.csv(Centroid_data_metroandcontrol, "Centroid_data_metroandcontrol.csv")
 ####################### Create Dummies for Spatial Bufferrings arround stations ##########################
 ################################################################################################
 
-Centroid_data_onlymetroneighbour <- Centroid_data[which(Centroid_data$station_open_year > Opening_year & Centroid_data$NEAR_DIST <= 1200),]
-Centroid_data_onlymetroneighbour$buffer400m <- 0
-Centroid_data_onlymetroneighbour$buffer800m <- 0
-Centroid_data_onlymetroneighbour$buffer1200m <- 0
-Centroid_data_onlymetroneighbour$buffer400m[Centroid_data_onlymetroneighbour$NEAR_DIST <= 400] <- 1
-Centroid_data_onlymetroneighbour$buffer800m[Centroid_data_onlymetroneighbour$NEAR_DIST > 400 & Centroid_data_onlymetroneighbour$NEAR_DIST <= 800] <- 1
-Centroid_data_onlymetroneighbour$buffer1200m[Centroid_data_onlymetroneighbour$NEAR_DIST > 800 & Centroid_data_onlymetroneighbour$NEAR_DIST <= 1200] <- 1
+Centroid_data_onlymetroneighbour = Centroid_data[which(Centroid_data$station_open_year > Opening_year & Centroid_data$NEAR_DIST <= 1200),]
+Centroid_data_onlymetroneighbour$buffer400m = 0
+Centroid_data_onlymetroneighbour$buffer800m = 0
+Centroid_data_onlymetroneighbour$buffer1200m = 0
+Centroid_data_onlymetroneighbour$buffer400m[Centroid_data_onlymetroneighbour$NEAR_DIST <= 400] = 1
+Centroid_data_onlymetroneighbour$buffer800m[Centroid_data_onlymetroneighbour$NEAR_DIST > 400 & Centroid_data_onlymetroneighbour$NEAR_DIST <= 800] = 1
+Centroid_data_onlymetroneighbour$buffer1200m[Centroid_data_onlymetroneighbour$NEAR_DIST > 800 & Centroid_data_onlymetroneighbour$NEAR_DIST <= 1200] = 1
 
 #########################################################################################
 ############################## Regression models ########################################
 ########################################################################################
 
-save_table <- function(lm, tablename){
-  x <- as.data.frame(lm$coefficients)
-  x$significance <- ''
-  x$significance[x$`Pr(>|t|)` < 0.05] <- "*"
-  x$significance[x$`Pr(>|t|)` < 0.1] <- "."
-  x$significance[x$`Pr(>|t|)` < 0.01] <- "**"
-  x$significance[x$`Pr(>|t|)` < 0.001] <- "***"
-  x$adjustedrsq <- lm$adj.r.squared
-  x$fstatistics_value <- lm$fstatistic[1]
-  x$fstatistics_Nrdf <- lm$fstatistic[2]
-  x$fstatistics_dendf <- lm$fstatistic[3]
-  x$call <- lm$call$formula[1]
-  x$type <- as.character(tablename)
+save_table = function(lm, tablename){
+  x = as.data.frame(lm$coefficients)
+  x$significance = ''
+  x$significance[x$`Pr(>|t|)` < 0.05] = "*"
+  x$significance[x$`Pr(>|t|)` < 0.1] = "."
+  x$significance[x$`Pr(>|t|)` < 0.01] = "**"
+  x$significance[x$`Pr(>|t|)` < 0.001] = "***"
+  x$adjustedrsq = lm$adj.r.squared
+  x$fstatistics_value = lm$fstatistic[1]
+  x$fstatistics_Nrdf = lm$fstatistic[2]
+  x$fstatistics_dendf = lm$fstatistic[3]
+  x$call = lm$call$formula[1]
+  x$type = as.character(tablename)
   return(x)
 }
 
 setwd(paste(dataFolder,"/", city,"/PSMresults", sep = ""))
 
-lm <- lm(entropy_diff ~ buffer400m + buffer800m + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + entropy_pre +streetdistance , Centroid_data_onlymetroneighbour)
-lm <- beta(model = lm,  x = TRUE, y = TRUE, skip = c("buffer400m", "buffer800m"))
-entropy_diff <- save_table(lm, "entropy_diff")
+lm = lm(entropy_diff ~ buffer400m + buffer800m + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + entropy_pre +streetdistance , Centroid_data_onlymetroneighbour)
+lm = beta(model = lm,  x = TRUE, y = TRUE, skip = c("buffer400m", "buffer800m"))
+entropy_diff = save_table(lm, "entropy_diff")
 
-lm <- lm(entropy_diff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + entropy_pre + streetdistance, PSM_dataset)
-lm <- beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
-entropy_PSM <- save_table(lm, "entropy_PSM")
+lm = lm(entropy_diff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + entropy_pre + streetdistance, PSM_dataset)
+lm = beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
+entropy_PSM = save_table(lm, "entropy_PSM")
 
-lm <- lm(entropy_diff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + entropy_pre + streetdistance, Centroid_data_metroandcontrol, weights = Centroid_data_metroandcontrol$eb_weights)
-lm <- beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
-entropy_ebal <- save_table(lm, "entropy_ebal")
+lm = lm(entropy_diff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + entropy_pre + streetdistance, Centroid_data_metroandcontrol, weights = Centroid_data_metroandcontrol$eb_weights)
+lm = beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
+entropy_ebal = save_table(lm, "entropy_ebal")
 
-lm <- lm(density_increase ~ buffer400m + buffer800m + pop_pre_buffer + popchange_buffer + perc_unemployed+ centroid_distance_center + rowsum_pre  + streetdistance,  Centroid_data_onlymetroneighbour)
-lm <- beta(model = lm,  x = TRUE, y = TRUE, skip = c("buffer400m", "buffer800m"))
-density_diff <- save_table(lm, "density_diff")
+lm = lm(density_increase ~ buffer400m + buffer800m + pop_pre_buffer + popchange_buffer + perc_unemployed+ centroid_distance_center + rowsum_pre  + streetdistance,  Centroid_data_onlymetroneighbour)
+lm = beta(model = lm,  x = TRUE, y = TRUE, skip = c("buffer400m", "buffer800m"))
+density_diff = save_table(lm, "density_diff")
 
-lm <- lm(density_increase ~ buffer400m + buffer800m + pop_pre_buffer + popchange_buffer + perc_unemployed+ centroid_distance_center  + streetdistance,  Centroid_data_onlymetroneighbour)
-lm <- beta(model = lm,  x = TRUE, y = TRUE, skip = c("buffer400m", "buffer800m"))
-density_diff2 <- save_table(lm, "density_diff2")
+lm = lm(density_increase ~ buffer400m + buffer800m + pop_pre_buffer + popchange_buffer + perc_unemployed+ centroid_distance_center  + streetdistance,  Centroid_data_onlymetroneighbour)
+lm = beta(model = lm,  x = TRUE, y = TRUE, skip = c("buffer400m", "buffer800m"))
+density_diff2 = save_table(lm, "density_diff2")
 
-lm <- lm(density_increase ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + rowsum_pre  + streetdistance , PSM_dataset)
-lm <- beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
-density_PSM <- save_table(lm, "density_PSM")
+lm = lm(density_increase ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + rowsum_pre  + streetdistance , PSM_dataset)
+lm = beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
+density_PSM = save_table(lm, "density_PSM")
 
-lm <- lm(density_increase ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + rowsum_pre  + streetdistance , Centroid_data_metroandcontrol, weights = Centroid_data_metroandcontrol$eb_weights)
-lm <- beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
-density_ebal <- save_table(lm, "density_ebal")
+lm = lm(density_increase ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + rowsum_pre  + streetdistance , Centroid_data_metroandcontrol, weights = Centroid_data_metroandcontrol$eb_weights)
+lm = beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
+density_ebal = save_table(lm, "density_ebal")
 
-lm <- lm(density_increase ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + rowsum_pre  + streetdistance + metroneighbourhood:rowsum_pre , Centroid_data_metroandcontrol, weights = Centroid_data_metroandcontrol$eb_weights)
-lm <- beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
-density_interaction2 <- save_table(lm, "density_interaction2")
+lm = lm(density_increase ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + rowsum_pre  + streetdistance + metroneighbourhood:rowsum_pre , Centroid_data_metroandcontrol, weights = Centroid_data_metroandcontrol$eb_weights)
+lm = beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
+density_interaction2 = save_table(lm, "density_interaction2")
 
-lm <- lm(density_increase ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + rowsum_pre  + streetdistance + metroneighbourhood:rowsum_pre , PSM_dataset)
-lm <- beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
-density_interaction <- save_table(lm, "density_interaction")
+lm = lm(density_increase ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + rowsum_pre  + streetdistance + metroneighbourhood:rowsum_pre , PSM_dataset)
+lm = beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
+density_interaction = save_table(lm, "density_interaction")
 
-lm <- lm(multifunctionality_diff ~ buffer400m + buffer800m + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + rowentropy_pre14 +streetdistance , Centroid_data_onlymetroneighbour)
-lm <- beta(model = lm,  x = TRUE, y = TRUE, skip = c("buffer400m", "buffer800m"))
-multifunctionality_diff <- save_table(lm, "multifunctionality_diff")
+lm = lm(multifunctionality_diff ~ buffer400m + buffer800m + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + rowentropy_pre14 +streetdistance , Centroid_data_onlymetroneighbour)
+lm = beta(model = lm,  x = TRUE, y = TRUE, skip = c("buffer400m", "buffer800m"))
+multifunctionality_diff = save_table(lm, "multifunctionality_diff")
 
-lm <- lm(multifunctionality_diff ~ buffer400m + buffer800m + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center +streetdistance , Centroid_data_onlymetroneighbour)
-lm <- beta(model = lm,  x = TRUE, y = TRUE, skip = c("buffer400m", "buffer800m"))
-multifunctionality_diff2 <- save_table(lm, "multifunctionality_diff2")
+lm = lm(multifunctionality_diff ~ buffer400m + buffer800m + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center +streetdistance , Centroid_data_onlymetroneighbour)
+lm = beta(model = lm,  x = TRUE, y = TRUE, skip = c("buffer400m", "buffer800m"))
+multifunctionality_diff2 = save_table(lm, "multifunctionality_diff2")
 
-lm <- lm(multifunctionality_diff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + rowentropy_pre14 + streetdistance, PSM_dataset)
-lm <- beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
-multifunctionality_PSM <- save_table(lm, "multifunctionality_PSM")
+lm = lm(multifunctionality_diff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + rowentropy_pre14 + streetdistance, PSM_dataset)
+lm = beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
+multifunctionality_PSM = save_table(lm, "multifunctionality_PSM")
 
-lm <- lm(multifunctionality_diff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + rowentropy_pre14 + streetdistance, Centroid_data_metroandcontrol, weights = Centroid_data_metroandcontrol$eb_weights)
-lm <- beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
-multifunctionality_ebal <- save_table(lm, "multifunctionality_ebal")
+lm = lm(multifunctionality_diff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + rowentropy_pre14 + streetdistance, Centroid_data_metroandcontrol, weights = Centroid_data_metroandcontrol$eb_weights)
+lm = beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
+multifunctionality_ebal = save_table(lm, "multifunctionality_ebal")
 
-Reg_results <- rbind(entropy_diff, entropy_PSM, entropy_ebal, density_diff, density_diff2, density_PSM, density_ebal, density_interaction, density_interaction2,  density_interaction2,  multifunctionality_diff, multifunctionality_diff2, multifunctionality_PSM, multifunctionality_ebal)
-Reg_results$city <- city
+Reg_results = rbind(entropy_diff, entropy_PSM, entropy_ebal, density_diff, density_diff2, density_PSM, density_ebal, density_interaction, density_interaction2,  density_interaction2,  multifunctionality_diff, multifunctionality_diff2, multifunctionality_PSM, multifunctionality_ebal)
+Reg_results$city = city
 
 write.csv(Reg_results, paste(city,"_reg_results.csv", sep = ""))
 
 
-lm <- lm(rowentropy_pre ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + streetdistance, PSM_dataset)
+lm = lm(rowentropy_pre ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + streetdistance, PSM_dataset)
 beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
 
-lm <- lm(rowentropy_pre ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + streetdistance, Centroid_data_metroandcontrol, weights = Centroid_data_metroandcontrol$eb_weights)
+lm = lm(rowentropy_pre ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + streetdistance, Centroid_data_metroandcontrol, weights = Centroid_data_metroandcontrol$eb_weights)
 beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
 
-lm <- lm(buffer400m ~ rowsum_pre, Centroid_data_onlymetroneighbour)
+lm = lm(buffer400m ~ rowsum_pre, Centroid_data_onlymetroneighbour)
 beta(model = lm,  x = TRUE, y = TRUE)
 
-test1 <- lm(density_increase ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + rowsum_pre  + streetdistance, PSM_dataset)
+test1 = lm(density_increase ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + rowsum_pre  + streetdistance, PSM_dataset)
 jpeg(paste( city, "Density Model Assumptions Test.jpeg"),  width=7, height=7, units = 'in', res = 1500)
 autoplot(test1)
 dev.off()
 
-test2 <- lm(entropy_diff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + entropy_pre  + streetdistance, PSM_dataset)
+test2 = lm(entropy_diff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + entropy_pre  + streetdistance, PSM_dataset)
 jpeg(paste(city, "Multifunctionality Model Assumptions Test.jpeg"),  width=7, height=7, units = 'in', res = 1500)
 autoplot(test2)
 dev.off()
@@ -262,22 +262,22 @@ for(c in c("Rome",  "Barcelona", "Vienna", "Budapest",
 
 dataFolder = "C:/Dokumente/Master Thesis/Master_these _ Latest"
 setwd(dataFolder)
-density_diff2 <- allRegression_results[allRegression_results$type == "density_diff2", ]
+density_diff2 = allRegression_results[allRegression_results$type == "density_diff2", ]
 write.csv(density_diff2, "density_diff2.csv")
 
-density_interaction <- allRegression_results[allRegression_results$type == "density_interaction", ]
+density_interaction = allRegression_results[allRegression_results$type == "density_interaction", ]
 write.csv(density_interaction, "density_interaction.csv")
 
-density_interaction2 <- allRegression_results[allRegression_results$type == "density_interaction2", ]
+density_interaction2 = allRegression_results[allRegression_results$type == "density_interaction2", ]
 write.csv(density_interaction2, "density_interaction2.csv")
 
-multifunctionality_diff2 <- allRegression_results[allRegression_results$type == "multifunctionality_diff2", ]
+multifunctionality_diff2 = allRegression_results[allRegression_results$type == "multifunctionality_diff2", ]
 write.csv(multifunctionality_diff2, "multifunctionality_diff2.csv")
 
-allRegression_results <- allRegression_results[order(allRegression_results$type), ]
-allRegression_results <- allRegression_results[allRegression_results$type != "entropy_diff", ]
-allRegression_results <- allRegression_results[allRegression_results$type != "entropy_PSM", ]
-allRegression_results <- allRegression_results[allRegression_results$type != "entropy_ebal", ]
+allRegression_results = allRegression_results[order(allRegression_results$type), ]
+allRegression_results = allRegression_results[allRegression_results$type != "entropy_diff", ]
+allRegression_results = allRegression_results[allRegression_results$type != "entropy_PSM", ]
+allRegression_results = allRegression_results[allRegression_results$type != "entropy_ebal", ]
 
 write.csv(allRegression_results, "allRegression_results.csv")
 
@@ -285,66 +285,66 @@ write.csv(allRegression_results, "allRegression_results.csv")
 ####### Testing venue type heterogeneity of number of openings ############################
 ###########################################################################################
 
-Heterogeneity_output <- function(table){
-  output <- matrix(nrow = 10, ncol = 24)
-  output <- as.data.frame(output)
-  rownames(output) <-  c("(Intercept)",
+Heterogeneity_output = function(table){
+  output = matrix(nrow = 10, ncol = 24)
+  output = as.data.frame(output)
+  rownames(output) =  c("(Intercept)",
                          "Metroneighbourhood", "Population 2012", "Pop change 2012-2018", 
                          "Percentage Unemployed", "Distance to Center", "Nr of venue type before station", 
                          "Street-level Distance to nearest Subcenter", "", "Adjusted R-squared:")
-  colnames(output) <- c("Food_ebal_coeff","Food_ebal_p", "Food_PSM_coeff", "Food_PSM_p", "Proff_ebal_coeff", 
+  colnames(output) = c("Food_ebal_coeff","Food_ebal_p", "Food_PSM_coeff", "Food_PSM_p", "Proff_ebal_coeff", 
                         "Proff_ebal_p", "Proff_PSM_coeff", "Proff_PSM_p", "Arts_ebal_coeff", 
                         "Arts_ebal_p", "Arts_PSM_coeff", "Arts_PSM_p", "Shops_ebal_coeff", "Shops_ebal_p", "Shops_PSM_coeff",  
                         "Shops_PSM_p", "Nightlife_ebal_coeff", "Nightlife_ebal_p", "Nightlife_PSM_coeff", "Nightlife_PSM_p",
                         "Recreation_ebal_coeff", "Recreation_ebal_p", "Recreation_PSM_coeff", "Recreation_PSM_p" )
   
-  output[1:8, 1] <- table$Estimate[table$type == "Food_ebal"]
-  output[1:8, 2] <- table$significance[table$type == "Food_ebal"]
-  output[10, 1] <- table$adjustedrsq[table$type == "Food_ebal"][1]
+  output[1:8, 1] = table$Estimate[table$type == "Food_ebal"]
+  output[1:8, 2] = table$significance[table$type == "Food_ebal"]
+  output[10, 1] = table$adjustedrsq[table$type == "Food_ebal"][1]
   
-  output[1:8, 3] <- table$Estimate[table$type == "Food_PSM"]
-  output[1:8, 4] <- table$significance[table$type == "Food_PSM"]
-  output[10, 3] <- table$adjustedrsq[table$type == "Food_PSM"][1]
+  output[1:8, 3] = table$Estimate[table$type == "Food_PSM"]
+  output[1:8, 4] = table$significance[table$type == "Food_PSM"]
+  output[10, 3] = table$adjustedrsq[table$type == "Food_PSM"][1]
   
-  output[1:8, 5] <- table$Estimate[table$type == "Proff_ebal"]
-  output[1:8, 6] <- table$significance[table$type == "Proff_ebal"]
-  output[10, 5] <- table$adjustedrsq[table$type == "Proff_ebal"][1]
+  output[1:8, 5] = table$Estimate[table$type == "Proff_ebal"]
+  output[1:8, 6] = table$significance[table$type == "Proff_ebal"]
+  output[10, 5] = table$adjustedrsq[table$type == "Proff_ebal"][1]
   
-  output[1:8, 7] <- table$Estimate[table$type == "Proff_PSM"]
-  output[1:8, 8] <- table$significance[table$type == "Proff_PSM"]
-  output[10, 7] <- table$adjustedrsq[table$type == "Proff_PSM"][1]
+  output[1:8, 7] = table$Estimate[table$type == "Proff_PSM"]
+  output[1:8, 8] = table$significance[table$type == "Proff_PSM"]
+  output[10, 7] = table$adjustedrsq[table$type == "Proff_PSM"][1]
   
-  output[1:8, 9] <- table$Estimate[table$type == "Arts_ebal"]
-  output[1:8, 10] <- table$significance[table$type == "Arts_ebal"]
-  output[10, 9] <- table$adjustedrsq[table$type == "Arts_ebal"][1]
+  output[1:8, 9] = table$Estimate[table$type == "Arts_ebal"]
+  output[1:8, 10] = table$significance[table$type == "Arts_ebal"]
+  output[10, 9] = table$adjustedrsq[table$type == "Arts_ebal"][1]
   
-  output[1:8, 11] <- table$Estimate[table$type == "Arts_PSM"]
-  output[1:8, 12] <- table$significance[table$type == "Arts_PSM"]
-  output[10, 11] <- table$adjustedrsq[table$type == "Arts_PSM"][1]
+  output[1:8, 11] = table$Estimate[table$type == "Arts_PSM"]
+  output[1:8, 12] = table$significance[table$type == "Arts_PSM"]
+  output[10, 11] = table$adjustedrsq[table$type == "Arts_PSM"][1]
   
-  output[1:8, 13] <- table$Estimate[table$type == "Shops_ebal"]
-  output[1:8, 14] <- table$significance[table$type == "Shops_ebal"]
-  output[10, 13] <- table$adjustedrsq[table$type == "Shops_ebal"][1]
+  output[1:8, 13] = table$Estimate[table$type == "Shops_ebal"]
+  output[1:8, 14] = table$significance[table$type == "Shops_ebal"]
+  output[10, 13] = table$adjustedrsq[table$type == "Shops_ebal"][1]
   
-  output[1:8, 15] <- table$Estimate[table$type == "Shops_PSM"]
-  output[1:8, 16] <- table$significance[table$type == "Shops_PSM"]
-  output[10, 15] <- table$adjustedrsq[table$type == "Shops_PSM"][1]
+  output[1:8, 15] = table$Estimate[table$type == "Shops_PSM"]
+  output[1:8, 16] = table$significance[table$type == "Shops_PSM"]
+  output[10, 15] = table$adjustedrsq[table$type == "Shops_PSM"][1]
   
-  output[1:8, 17] <- table$Estimate[table$type == "Nightlife_ebal"]
-  output[1:8, 18] <- table$significance[table$type == "Nightlife_ebal"]
-  output[10, 17] <- table$adjustedrsq[table$type == "Nightlife_ebal"][1]
+  output[1:8, 17] = table$Estimate[table$type == "Nightlife_ebal"]
+  output[1:8, 18] = table$significance[table$type == "Nightlife_ebal"]
+  output[10, 17] = table$adjustedrsq[table$type == "Nightlife_ebal"][1]
   
-  output[1:8, 19] <- table$Estimate[table$type == "Nightlife_PSM"]
-  output[1:8, 20] <- table$significance[table$type == "Nightlife_PSM"]
-  output[10, 19] <- table$adjustedrsq[table$type == "Nightlife_PSM"][1]
+  output[1:8, 19] = table$Estimate[table$type == "Nightlife_PSM"]
+  output[1:8, 20] = table$significance[table$type == "Nightlife_PSM"]
+  output[10, 19] = table$adjustedrsq[table$type == "Nightlife_PSM"][1]
   
-  output[1:8, 21] <- table$Estimate[table$type == "Recreation_ebal"]
-  output[1:8, 22] <- table$significance[table$type == "Recreation_ebal"]
-  output[10, 21] <- table$adjustedrsq[table$type == "Recreation_ebal"][1]
+  output[1:8, 21] = table$Estimate[table$type == "Recreation_ebal"]
+  output[1:8, 22] = table$significance[table$type == "Recreation_ebal"]
+  output[10, 21] = table$adjustedrsq[table$type == "Recreation_ebal"][1]
   
-  output[1:8, 23] <- table$Estimate[table$type == "Recreation_PSM"]
-  output[1:8, 24] <- table$significance[table$type == "Recreation_PSM"]
-  output[10, 23] <- table$adjustedrsq[table$type == "Recreation_PSM"][1]
+  output[1:8, 23] = table$Estimate[table$type == "Recreation_PSM"]
+  output[1:8, 24] = table$significance[table$type == "Recreation_PSM"]
+  output[10, 23] = table$adjustedrsq[table$type == "Recreation_PSM"][1]
   return(output)
 }
 
@@ -355,72 +355,72 @@ c("nr_Food_pre_300mbuff" , "nr_ShopsServ_pre_300mbuff",  "nr_ArtsEnter_pre_300mb
   "nr_Recreation_pre_300mbuff","nr_Food_prepost_300mbuff", "nr_ShopsServ_prepost_300mbuff",  "nr_ArtsEnter_prepost_300mbuff",  "nr_Nightlife_prepost_300mbuff" ,   
   "nr_Proff_prepost_300mbuff", "nr_Recreation_prepost_300mbuff")
 
-lm <- lm(nr_Food_prepost_300mbuff ~ buffer400m + buffer800m + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + nr_Food_pre_300mbuff+ streetdistance, Centroid_data_onlymetroneighbour)
-lm <- beta(model = lm,  x = TRUE, y = TRUE, skip = c("buffer400m", "buffer800m"))
-Food_diff <- save_table(lm, tablename = "Food_diff")
-lm <- lm(nr_Food_prepost_300mbuff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center +  nr_Food_pre_300mbuff+ streetdistance, PSM_dataset)
-lm <- beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
-Food_PSM <- save_table(lm, tablename = "Food_PSM")
-lm <- lm(nr_Proff_prepost_300mbuff ~ buffer400m + buffer800m + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + nr_Proff_pre_300mbuff + streetdistance, Centroid_data_onlymetroneighbour)
-lm <- beta(model = lm,  x = TRUE, y = TRUE, skip = c("buffer400m", "buffer800m"))
-Proff_diff <- save_table(lm, tablename = "Proff_diff")
-lm <- lm(nr_Proff_prepost_300mbuff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center +  nr_Proff_pre_300mbuff+ streetdistance, PSM_dataset)
-lm <- beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
-Proff_PSM <- save_table(lm, tablename = "Proff_PSM")
-lm <- lm(nr_ArtsEnter_prepost_300mbuff ~ buffer400m + buffer800m + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + nr_ArtsEnter_pre_300mbuff+ streetdistance, Centroid_data_onlymetroneighbour)
-lm <- beta(model = lm,  x = TRUE, y = TRUE, skip = c("buffer400m", "buffer800m"))
-Arts_diff <- save_table(lm, tablename = "Arts_diff")
-lm <- lm(nr_ArtsEnter_prepost_300mbuff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center +  nr_ArtsEnter_pre_300mbuff+ streetdistance, PSM_dataset)
-lm <- beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
-Arts_PSM <- save_table(lm, tablename = "Arts_PSM")
-lm <- lm(nr_ShopsServ_prepost_300mbuff ~ buffer400m + buffer800m + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + nr_ShopsServ_pre_300mbuff+ streetdistance, Centroid_data_onlymetroneighbour)
-lm <- beta(model = lm,  x = TRUE, y = TRUE, skip = c("buffer400m", "buffer800m"))
-Shops_diff <- save_table(lm, tablename = "Shops_diff")
-lm <- lm(nr_ShopsServ_prepost_300mbuff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center +  nr_ShopsServ_pre_300mbuff+ streetdistance, PSM_dataset)
-lm <- beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
-Shops_PSM <- save_table(lm, tablename = "Shops_PSM")
-lm <- lm(nr_Nightlife_prepost_300mbuff ~ buffer400m + buffer800m + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + nr_Nightlife_pre_300mbuff+ streetdistance, Centroid_data_onlymetroneighbour)
-lm <- beta(model = lm,  x = TRUE, y = TRUE, skip = c("buffer400m", "buffer800m"))
-Nightlife_diff <- save_table(lm, tablename = "Nightlife_diff")
-lm <- lm(nr_Nightlife_prepost_300mbuff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center +  nr_Nightlife_pre_300mbuff+ streetdistance, PSM_dataset)
-lm <- beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
-Nightlife_PSM <- save_table(lm, tablename = "Nightlife_PSM")
-lm <- lm(nr_Food_prepost_300mbuff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center +  nr_Food_pre_300mbuff+ streetdistance, Centroid_data_metroandcontrol, weights = Centroid_data_metroandcontrol$eb_weights)
-lm <- beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
-Food_ebal <- save_table(lm, tablename = "Food_ebal")
-lm <- lm(nr_Proff_prepost_300mbuff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center +  nr_Proff_pre_300mbuff+ streetdistance, Centroid_data_metroandcontrol, weights = Centroid_data_metroandcontrol$eb_weights)
-lm <- beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
-Proff_ebal <- save_table(lm, tablename = "Proff_ebal")
-lm <- lm(nr_ArtsEnter_prepost_300mbuff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center +  nr_ArtsEnter_pre_300mbuff+ streetdistance, Centroid_data_metroandcontrol, weights = Centroid_data_metroandcontrol$eb_weights)
-lm <- beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
-Arts_ebal <- save_table(lm, tablename = "Arts_ebal")
-lm <- lm(nr_ShopsServ_prepost_300mbuff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center +  nr_ShopsServ_pre_300mbuff+ streetdistance, Centroid_data_metroandcontrol, weights = Centroid_data_metroandcontrol$eb_weights)
-lm <- beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
-Shops_ebal <- save_table(lm, tablename = "Shops_ebal")
-lm <- lm(nr_Nightlife_prepost_300mbuff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center +  nr_Nightlife_pre_300mbuff+ streetdistance, Centroid_data_metroandcontrol, weights = Centroid_data_metroandcontrol$eb_weights)
-lm <- beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
-Nightlife_ebal <- save_table(lm, tablename = "Nightlife_ebal")
-lm <- lm(nr_Recreation_prepost_300mbuff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center +  nr_Recreation_pre_300mbuff+ streetdistance, Centroid_data_metroandcontrol, weights = Centroid_data_metroandcontrol$eb_weights)
-lm <- beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
-Recreation_ebal <- save_table(lm, tablename = "Recreation_ebal")
-lm <- lm(nr_Recreation_prepost_300mbuff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center +  nr_Recreation_pre_300mbuff+ streetdistance, PSM_dataset)
-lm <- beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
-Recreation_PSM <- save_table(lm, tablename = "Recreation_PSM")
+lm = lm(nr_Food_prepost_300mbuff ~ buffer400m + buffer800m + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + nr_Food_pre_300mbuff+ streetdistance, Centroid_data_onlymetroneighbour)
+lm = beta(model = lm,  x = TRUE, y = TRUE, skip = c("buffer400m", "buffer800m"))
+Food_diff = save_table(lm, tablename = "Food_diff")
+lm = lm(nr_Food_prepost_300mbuff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center +  nr_Food_pre_300mbuff+ streetdistance, PSM_dataset)
+lm = beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
+Food_PSM = save_table(lm, tablename = "Food_PSM")
+lm = lm(nr_Proff_prepost_300mbuff ~ buffer400m + buffer800m + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + nr_Proff_pre_300mbuff + streetdistance, Centroid_data_onlymetroneighbour)
+lm = beta(model = lm,  x = TRUE, y = TRUE, skip = c("buffer400m", "buffer800m"))
+Proff_diff = save_table(lm, tablename = "Proff_diff")
+lm = lm(nr_Proff_prepost_300mbuff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center +  nr_Proff_pre_300mbuff+ streetdistance, PSM_dataset)
+lm = beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
+Proff_PSM = save_table(lm, tablename = "Proff_PSM")
+lm = lm(nr_ArtsEnter_prepost_300mbuff ~ buffer400m + buffer800m + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + nr_ArtsEnter_pre_300mbuff+ streetdistance, Centroid_data_onlymetroneighbour)
+lm = beta(model = lm,  x = TRUE, y = TRUE, skip = c("buffer400m", "buffer800m"))
+Arts_diff = save_table(lm, tablename = "Arts_diff")
+lm = lm(nr_ArtsEnter_prepost_300mbuff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center +  nr_ArtsEnter_pre_300mbuff+ streetdistance, PSM_dataset)
+lm = beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
+Arts_PSM = save_table(lm, tablename = "Arts_PSM")
+lm = lm(nr_ShopsServ_prepost_300mbuff ~ buffer400m + buffer800m + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + nr_ShopsServ_pre_300mbuff+ streetdistance, Centroid_data_onlymetroneighbour)
+lm = beta(model = lm,  x = TRUE, y = TRUE, skip = c("buffer400m", "buffer800m"))
+Shops_diff = save_table(lm, tablename = "Shops_diff")
+lm = lm(nr_ShopsServ_prepost_300mbuff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center +  nr_ShopsServ_pre_300mbuff+ streetdistance, PSM_dataset)
+lm = beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
+Shops_PSM = save_table(lm, tablename = "Shops_PSM")
+lm = lm(nr_Nightlife_prepost_300mbuff ~ buffer400m + buffer800m + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center + nr_Nightlife_pre_300mbuff+ streetdistance, Centroid_data_onlymetroneighbour)
+lm = beta(model = lm,  x = TRUE, y = TRUE, skip = c("buffer400m", "buffer800m"))
+Nightlife_diff = save_table(lm, tablename = "Nightlife_diff")
+lm = lm(nr_Nightlife_prepost_300mbuff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center +  nr_Nightlife_pre_300mbuff+ streetdistance, PSM_dataset)
+lm = beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
+Nightlife_PSM = save_table(lm, tablename = "Nightlife_PSM")
+lm = lm(nr_Food_prepost_300mbuff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center +  nr_Food_pre_300mbuff+ streetdistance, Centroid_data_metroandcontrol, weights = Centroid_data_metroandcontrol$eb_weights)
+lm = beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
+Food_ebal = save_table(lm, tablename = "Food_ebal")
+lm = lm(nr_Proff_prepost_300mbuff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center +  nr_Proff_pre_300mbuff+ streetdistance, Centroid_data_metroandcontrol, weights = Centroid_data_metroandcontrol$eb_weights)
+lm = beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
+Proff_ebal = save_table(lm, tablename = "Proff_ebal")
+lm = lm(nr_ArtsEnter_prepost_300mbuff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center +  nr_ArtsEnter_pre_300mbuff+ streetdistance, Centroid_data_metroandcontrol, weights = Centroid_data_metroandcontrol$eb_weights)
+lm = beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
+Arts_ebal = save_table(lm, tablename = "Arts_ebal")
+lm = lm(nr_ShopsServ_prepost_300mbuff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center +  nr_ShopsServ_pre_300mbuff+ streetdistance, Centroid_data_metroandcontrol, weights = Centroid_data_metroandcontrol$eb_weights)
+lm = beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
+Shops_ebal = save_table(lm, tablename = "Shops_ebal")
+lm = lm(nr_Nightlife_prepost_300mbuff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center +  nr_Nightlife_pre_300mbuff+ streetdistance, Centroid_data_metroandcontrol, weights = Centroid_data_metroandcontrol$eb_weights)
+lm = beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
+Nightlife_ebal = save_table(lm, tablename = "Nightlife_ebal")
+lm = lm(nr_Recreation_prepost_300mbuff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center +  nr_Recreation_pre_300mbuff+ streetdistance, Centroid_data_metroandcontrol, weights = Centroid_data_metroandcontrol$eb_weights)
+lm = beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
+Recreation_ebal = save_table(lm, tablename = "Recreation_ebal")
+lm = lm(nr_Recreation_prepost_300mbuff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center +  nr_Recreation_pre_300mbuff+ streetdistance, PSM_dataset)
+lm = beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
+Recreation_PSM = save_table(lm, tablename = "Recreation_PSM")
 
-Venueheterogeneity <- rbind(Food_ebal, Food_PSM, Proff_ebal, Proff_PSM, Arts_ebal, Arts_PSM, Shops_ebal, Shops_PSM, Nightlife_ebal, Nightlife_PSM, Recreation_ebal, Recreation_PSM)
+Venueheterogeneity = rbind(Food_ebal, Food_PSM, Proff_ebal, Proff_PSM, Arts_ebal, Arts_PSM, Shops_ebal, Shops_PSM, Nightlife_ebal, Nightlife_PSM, Recreation_ebal, Recreation_PSM)
 
 ## testing gentrification hypothesis with population increase interaction
-lm <- lm(nr_ArtsEnter_prepost_300mbuff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center +  nr_ArtsEnter_pre_300mbuff+ streetdistance + metroneighbourhood:popchange_buffer, PSM_dataset)
+lm = lm(nr_ArtsEnter_prepost_300mbuff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center +  nr_ArtsEnter_pre_300mbuff+ streetdistance + metroneighbourhood:popchange_buffer, PSM_dataset)
 beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
-lm <- lm(nr_ArtsEnter_prepost_300mbuff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center +  nr_ArtsEnter_pre_300mbuff+ streetdistance + metroneighbourhood:popchange_buffer, Centroid_data_metroandcontrol, weights = Centroid_data_metroandcontrol$eb_weights)
-beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
-
-lm <- lm(nr_Nightlife_prepost_300mbuff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center +  nr_Nightlife_pre_300mbuff+ streetdistance + metroneighbourhood:popchange_buffer, PSM_dataset)
-beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
-lm <- lm(nr_Nightlife_prepost_300mbuff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center +  nr_Nightlife_pre_300mbuff+ streetdistance +metroneighbourhood:popchange_buffer, Centroid_data_metroandcontrol, weights = Centroid_data_metroandcontrol$eb_weights)
+lm = lm(nr_ArtsEnter_prepost_300mbuff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center +  nr_ArtsEnter_pre_300mbuff+ streetdistance + metroneighbourhood:popchange_buffer, Centroid_data_metroandcontrol, weights = Centroid_data_metroandcontrol$eb_weights)
 beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
 
-Hetero_output <- Heterogeneity_output(Venueheterogeneity)
+lm = lm(nr_Nightlife_prepost_300mbuff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center +  nr_Nightlife_pre_300mbuff+ streetdistance + metroneighbourhood:popchange_buffer, PSM_dataset)
+beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
+lm = lm(nr_Nightlife_prepost_300mbuff ~ metroneighbourhood + pop_pre_buffer + popchange_buffer + perc_unemployed + centroid_distance_center +  nr_Nightlife_pre_300mbuff+ streetdistance +metroneighbourhood:popchange_buffer, Centroid_data_metroandcontrol, weights = Centroid_data_metroandcontrol$eb_weights)
+beta(model = lm,  x = TRUE, y = TRUE, skip = c("metroneighbourhood"))
+
+Hetero_output = Heterogeneity_output(Venueheterogeneity)
 write.csv(Hetero_output, paste(city, "_hetero_output.csv", sep = ""))
 write.csv(Venueheterogeneity, paste(city, "_venueheterogeneity.csv", sep = ""))
 
@@ -459,12 +459,12 @@ write.csv(Venueheterogeneity_complete, "Venueheterogeneity_complete.csv")
 
 
 ##Coefficients and Significance comparison
-coeff_compare <- as.data.frame(matrix(nrow = 9, ncol = 12))
-colnames(coeff_compare) <- c("Food_PSM_coeff", "Food_PSM_p",  "Proff_PSM_coeff", "Proff_PSM_p",  "Arts_PSM_coeff", "Arts_PSM_p", 
+coeff_compare = as.data.frame(matrix(nrow = 9, ncol = 12))
+colnames(coeff_compare) = c("Food_PSM_coeff", "Food_PSM_p",  "Proff_PSM_coeff", "Proff_PSM_p",  "Arts_PSM_coeff", "Arts_PSM_p", 
                              "Shops_PSM_coeff", "Shops_PSM_p",  "Nightlife_PSM_coeff", "Nightlife_PSM_p", "Recreation_PSM_coeff", "Recreation_PSM_p")
-rownames(coeff_compare) <- c("Rome", "Barcelona", "Milan", "Vienna", "Budapest", "Sofia", "Warsaw", "Helsinki", "Stuttgart")
+rownames(coeff_compare) = c("Rome", "Barcelona", "Milan", "Vienna", "Budapest", "Sofia", "Warsaw", "Helsinki", "Stuttgart")
 
-types <- c("Food_PSM", "Proff_PSM", "Arts_PSM", "Shops_PSM", "Nightlife_PSM", "Recreation_PSM")
+types = c("Food_PSM", "Proff_PSM", "Arts_PSM", "Shops_PSM", "Nightlife_PSM", "Recreation_PSM")
 
 setwd(paste(dataFolder,"/", city,"/PSMresults", sep = ""))
 Venueheterogeneity = read.csv(paste(city, "_venueheterogeneity.csv", sep = ""))
@@ -483,12 +483,12 @@ for(c in colnames(coeff_compare)){
 }
  write.csv(coeff_compare, "coeff_compare_PSM.csv")
 
- coeff_compare <- as.data.frame(matrix(nrow = 9, ncol = 12))
- colnames(coeff_compare) <- c("Food_ebal_coeff", "Food_ebal_p",  "Proff_ebal_coeff", "Proff_ebal_p",  "Arts_ebal_coeff", "Arts_ebal_p", 
+ coeff_compare = as.data.frame(matrix(nrow = 9, ncol = 12))
+ colnames(coeff_compare) = c("Food_ebal_coeff", "Food_ebal_p",  "Proff_ebal_coeff", "Proff_ebal_p",  "Arts_ebal_coeff", "Arts_ebal_p", 
                               "Shops_ebal_coeff", "Shops_ebal_p",  "Nightlife_ebal_coeff", "Nightlife_ebal_p", "Recreation_ebal_coeff", "Recreation_ebal_p")
- rownames(coeff_compare) <- c("Rome", "Barcelona", "Milan", "Vienna", "Budapest", "Sofia", "Warsaw", "Helsinki", "Stuttgart")
+ rownames(coeff_compare) = c("Rome", "Barcelona", "Milan", "Vienna", "Budapest", "Sofia", "Warsaw", "Helsinki", "Stuttgart")
  
- types <- c("Food_ebal", "Proff_ebal", "Arts_ebal", "Shops_ebal", "Nightlife_ebal", "Recreation_ebal")
+ types = c("Food_ebal", "Proff_ebal", "Arts_ebal", "Shops_ebal", "Nightlife_ebal", "Recreation_ebal")
  
  for(c in colnames(coeff_compare)){
    setwd(paste(dataFolder,"/", c,"/PSMresults", sep = ""))
@@ -532,20 +532,20 @@ post_3_years = Opening_year + 3
 setwd(paste(dataFolder, "/", city, sep = ""))
 Centroids_buff300m_df = read.csv(paste(city, "venuehexagonbuffers_tot.csv", sep = ""), header = TRUE)
 
-Venuehexagonbuffers_clean <- subset(Centroids_buff300m_df, select = c(venueid, venuename, categoryid, categoryna, Metacatego, venue_openingyear, venue_openingmonth, ORIG_FID))
-colnames(Venuehexagonbuffers_clean) <- c("venueid", "venuename", "categoryid", "categoryna", "Metacatego", "venue_openingyear", "venue_openingmonth", "Target_FID")
-Metro_neigh_amenities <- merge(Venuehexagonbuffers_clean, PSM_dataset, by= "Target_FID", all = F)
-Metro_neigh_amenities <- subset(Metro_neigh_amenities, select= c(venueid, venuename, categoryid, categoryna, Metacatego, venue_openingyear, venue_openingmonth, station_open_year, metroneighbourhood))
-Metro_neigh_amenities <- distinct(Metro_neigh_amenities)
-Metro_neigh_amenities <- Metro_neigh_amenities[Metro_neigh_amenities$venue_openingyear >= Opening_year & Metro_neigh_amenities$venue_openingyear <= post_3_years,]
+Venuehexagonbuffers_clean = subset(Centroids_buff300m_df, select = c(venueid, venuename, categoryid, categoryna, Metacatego, venue_openingyear, venue_openingmonth, ORIG_FID))
+colnames(Venuehexagonbuffers_clean) = c("venueid", "venuename", "categoryid", "categoryna", "Metacatego", "venue_openingyear", "venue_openingmonth", "Target_FID")
+Metro_neigh_amenities = merge(Venuehexagonbuffers_clean, PSM_dataset, by= "Target_FID", all = F)
+Metro_neigh_amenities = subset(Metro_neigh_amenities, select= c(venueid, venuename, categoryid, categoryna, Metacatego, venue_openingyear, venue_openingmonth, station_open_year, metroneighbourhood))
+Metro_neigh_amenities = distinct(Metro_neigh_amenities)
+Metro_neigh_amenities = Metro_neigh_amenities[Metro_neigh_amenities$venue_openingyear >= Opening_year & Metro_neigh_amenities$venue_openingyear <= post_3_years,]
 for(i in 1:nrow(Metro_neigh_amenities)){
   if(as.numeric(Metro_neigh_amenities$venue_openingmonth[i]) < 10){
-    Metro_neigh_amenities$venue_openingmonth[i] <-paste("0", as.character(Metro_neigh_amenities$venue_openingmonth[i]), sep = "")
+    Metro_neigh_amenities$venue_openingmonth[i] =paste("0", as.character(Metro_neigh_amenities$venue_openingmonth[i]), sep = "")
   }
 }
-Metro_neigh_amenities$venueopeningdate <- paste(as.character(Metro_neigh_amenities$venue_openingmonth), "-01-", as.character(Metro_neigh_amenities$venue_openingyear, sep = ""))
-Metro_neigh_amenities$venueopeningdate <- gsub(" ", "", Metro_neigh_amenities$venueopeningdate)
-Metro_neigh_amenities$venueopeningdate <- as.Date.character(as.character(Metro_neigh_amenities$venueopeningdate), format = '%m-%d-%Y')
+Metro_neigh_amenities$venueopeningdate = paste(as.character(Metro_neigh_amenities$venue_openingmonth), "-01-", as.character(Metro_neigh_amenities$venue_openingyear, sep = ""))
+Metro_neigh_amenities$venueopeningdate = gsub(" ", "", Metro_neigh_amenities$venueopeningdate)
+Metro_neigh_amenities$venueopeningdate = as.Date.character(as.character(Metro_neigh_amenities$venueopeningdate), format = '%m-%d-%Y')
 
 
 setwd(dataFolder, "/", city, "/PSMresults")
@@ -577,24 +577,24 @@ dev.off()
 ############ Decentralization Index ###############
 ################################################
 
-Decentralization <- as.data.frame(matrix(nrow = 9, ncol = 2))
-rownames(Decentralization) <- c("Rome",  "Barcelona", "Vienna", "Budapest", "Helsinki", "Stuttgart",
+Decentralization = as.data.frame(matrix(nrow = 9, ncol = 2))
+rownames(Decentralization) = c("Rome",  "Barcelona", "Vienna", "Budapest", "Helsinki", "Stuttgart",
                                "Sofia", "Warsaw", "Milan")
-colnames(Decentralization) <- c("Before subway expansion", "After subway expansion")
+colnames(Decentralization) = c("Before subway expansion", "After subway expansion")
 
 Calc_decentralization = function(Centroid_data){
-  entropy <- function(mat) {
-    freqs <- mat/rowSums (mat)
-    entropy <- - rowSums (freqs * log2(freqs+0.000000001))
-    entropy <- round (entropy, digits = 3)
+  entropy = function(mat) {
+    freqs = mat/rowSums (mat)
+    entropy = - rowSums (freqs * log2(freqs+0.000000001))
+    entropy = round (entropy, digits = 3)
     return (entropy)
   }
-  x <- as.data.frame(matrix(nrow = 1, ncol = nrow(Centroid_data)))
-  decent_df <- as.data.frame(matrix(nrow = 1, ncol = 2))
-  x[1, ] <- Centroid_data$rowsum_pre
-  decent_df[1, 1]  <-  entropy(x)
-  x[1, ] <- Centroid_data$rowsum_post
-  decent_df[1, 2]  <-  entropy(x)
+  x = as.data.frame(matrix(nrow = 1, ncol = nrow(Centroid_data)))
+  decent_df = as.data.frame(matrix(nrow = 1, ncol = 2))
+  x[1, ] = Centroid_data$rowsum_pre
+  decent_df[1, 1]  =  entropy(x)
+  x[1, ] = Centroid_data$rowsum_post
+  decent_df[1, 2]  =  entropy(x)
   return(decent_df)
 }
 
@@ -603,7 +603,7 @@ x = Calc_decentralization(Centroid_data = Centroid_data)
 for(c in c("Rome",  "Barcelona", "Vienna", "Budapest", "Helsinki", "Stuttgart",
            "Sofia", "Warsaw", "Milan")){
   setwd(paste(dataFolder, "/", c, sep = ""))
-  Centroid_data <- read.csv(paste(c, "centroid_data.csv", sep = ""), header = TRUE)
+  Centroid_data = read.csv(paste(c, "centroid_data.csv", sep = ""), header = TRUE)
   Decentralization[c(c), ] = Calc_decentralization(Centroid_data = Centroid_data)
 }
 
@@ -612,7 +612,7 @@ write.csv(Decentralization, "Decentralization.csv")
 
 ###############################
 setwd(paste(dataFolder, "/", city, sep = ""))
-Centroid_data <- read.csv(paste(city, "centroid_data.csv", sep = ""), header = TRUE)
+Centroid_data = read.csv(paste(city, "centroid_data.csv", sep = ""), header = TRUE)
 
 setwd(dataFolder, "/", city, "/PSMresults")
 jpeg(paste( city, "Decentralization before.jpeg"),  width=7, height=6, units = 'in', res = 2000 )
@@ -633,18 +633,18 @@ ggplot(data =  Centroid_data, aes(x= centroid_distance_center, y = rowsum_post))
   labs(x="Distance to CBD")
 dev.off()
 
-Decentralization_results <- as.data.frame(matrix(ncol = 4, nrow = 9))
-colnames(Decentralization_results) <- c("City", "beta_densdist_before", "beta_densdist_after", "beta_diff")
-Decentralization_results$City <- c("Rome", "Barcelona", "Helsinki", "Vienna", "Milan", "Budapest", "Sofia", "Warsaw", "Stuttgart")
+Decentralization_results = as.data.frame(matrix(ncol = 4, nrow = 9))
+colnames(Decentralization_results) = c("City", "beta_densdist_before", "beta_densdist_after", "beta_diff")
+Decentralization_results$City = c("Rome", "Barcelona", "Helsinki", "Vienna", "Milan", "Budapest", "Sofia", "Warsaw", "Stuttgart")
 for(c in Decentralization_results$City){
   setwd(paste(dataFolder, "/", c, sep = ""))
-  Centroid_data <- read.csv(paste(c, "centroid_data.csv", sep = ""), header = TRUE)
+  Centroid_data = read.csv(paste(c, "centroid_data.csv", sep = ""), header = TRUE)
   Decentralization_results$beta_densdist_before[which(Decentralization_results$City == c)] = lm(rowsum_pre ~ centroid_distance_center, Centroid_data)$coefficients[2]
   Decentralization_results$beta_densdist_after[which(Decentralization_results$City == c)] = lm(rowsum_post ~ centroid_distance_center, Centroid_data)$coefficients[2]
 }
 
 
-Decentralization_results$beta_diff <- Decentralization_results$beta_densdist_after - Decentralization_results$beta_densdist_before
+Decentralization_results$beta_diff = Decentralization_results$beta_densdist_after - Decentralization_results$beta_densdist_before
 
 setwd(dataFolder)
 write.csv(Decentralization_results, "Decentralization_results.csv")
