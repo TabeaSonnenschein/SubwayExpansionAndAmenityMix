@@ -70,8 +70,8 @@ setwd(paste(dataFolder,"/Foursquare/", city, "/inferred_openings", sep = ""))
 Fsq =read.csv(paste(city, "_all.csv", sep = ""), header = T)
 coordinates(Fsq)= ~lon+lat
 proj4string(Fsq)=CRS("+proj=longlat +datum=WGS84") 
-writeOGR(Fsq, dsn=paste(dataFolder,"/Foursquare/", city, sep = "") ,layer= paste(city, "_Fsq.csv", sep = ""),driver="ESRI Shapefile")
-Fsq = readOGR(dsn=paste(dataFolder,"/Foursquare/", city, sep = "") ,layer= paste(city, "_Fsq.csv", sep = ""))
+writeOGR(Fsq, dsn=paste(dataFolder,"/Foursquare/", city, sep = "") ,layer= paste(city, "_Fsq", sep = ""),driver="ESRI Shapefile")
+Fsq = readOGR(dsn=paste(dataFolder,"/Foursquare/", city, sep = "") ,layer= paste(city, "_Fsq", sep = ""))
 plot(Fsq, main = paste(city, "Foursquare Venues"))
 
 
